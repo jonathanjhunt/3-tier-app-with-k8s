@@ -1,0 +1,28 @@
+.App {
+  text-align: center;
+  background-color: #031926;
+}
+
+.App-logo {
+  height: 20vmin;
+  pointer-events: none;
+}
+
+.App-header {
+  background-color: #031926;
+  min-height: 20vh;
+  display: flex;
+  align-items: top;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+body .card {
+  /* background-color: #f8e3c3; */
+  background-color: #dbe7e8;
+}
