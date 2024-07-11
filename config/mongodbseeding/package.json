@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "mongo-seeding": "^4.0.0"
+  }
+}

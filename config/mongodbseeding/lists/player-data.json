@@ -1,0 +1,122 @@
+[
+    {
+      "player": "Kylian Mbappe",
+      "team": "France",
+      "votes": 0,
+      "countrycode": "fr"
+    },
+    {
+      "player": "Rodri",
+      "team": "Spain",
+      "votes": 0,
+      "countrycode": "es"
+    },
+    {
+      "player": "Phil Foden",
+      "team": "England",
+      "votes": 0,
+      "countrycode": "gb-eng"
+    },
+    {
+      "player": "Jude Bellingham",
+      "team": "England",
+      "votes": 0,
+      "countrycode": "gb-eng"
+    },
+    {
+      "player": "Florian Wirtz",
+      "team": "Germany",
+      "votes": 0,
+      "countrycode": "de"
+    },
+    {
+      "player": "Harry Kane",
+      "team": "England",
+      "votes": 0,
+      "countrycode": "gb-eng"
+    },
+    {
+      "player": "Toni Kroos",
+      "team": "Germany",
+      "votes": 0,
+      "countrycode": "de"
+    },
+    {
+      "player": "Antoine Griezmann",
+      "team": "France",
+      "votes": 0,
+      "countrycode": "fr"
+    },
+    {
+      "player": "Eduardo Camavinga",
+      "team": "France",
+      "votes": 0,
+      "countrycode": "fr"
+    },
+    {
+      "player": "Declan Rice",
+      "team": "England",
+      "votes": 0,
+      "countrycode": "gb-eng"
+    },
+    {
+      "player": "Kevin De Bruyne",
+      "team": "Belgium",
+      "votes": 0,
+      "countrycode": "be"
+    },
+    {
+      "player": "Bukayo Saka",
+      "team": "England",
+      "votes": 0,
+      "countrycode": "gb-eng"
+    },
+    {
+      "player": "Jamal Musiala",
+      "team": "Germany",
+      "votes": 0,
+      "countrycode": "de"
+    },
+    {
+      "player": "Virgil van Dijk",
+      "team": "Netherlands",
+      "votes": 0,
+      "countrycode": "nl"
+    },
+    {
+      "player": "Bernardo Silva",
+      "team": "Portugal",
+      "votes": 0,
+      "countrycode": "pt"
+    },
+    {
+      "player": "Josko Gvardiol",
+      "team": "Croatia",
+      "votes": 0,
+      "countrycode": "hr"
+    },
+    {
+      "player": "Gianluigi Donnarumma",
+      "team": "Italy",
+      "votes": 0,
+      "countrycode": "it"
+    },
+    {
+      "player": "Ilkay Gundogan",
+      "team": "Germany",
+      "votes": 0,
+      "countrycode": "de"
+    },
+    {
+      "player": "Cristiano Ronaldo",
+      "team": "Portugal",
+      "votes": 0,
+      "countrycode": "pt"
+    },
+    {
+      "player": "Manuel Neuer",
+      "team": "Germany",
+      "votes": 0,
+      "countrycode": "de"
+    }
+   ]
