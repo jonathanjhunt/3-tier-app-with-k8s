@@ -9,7 +9,8 @@ Clone this repo and you can:
 4. Experience the power of K8s autoscaling in action!
 
 
-<img width="1313" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/9eea2857-f144-4b8e-87e1-d6a61239e7eb">
+![image](https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/e161b058-507b-42d0-9964-7f42a066270f)
+
 
 ## Prerequisites
 |Service  | Requirement | Link |
@@ -34,7 +35,8 @@ Navigate to the folder of the cloned repo and run the command:
 
     sh start_app.sh
 
-<img width="1060" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/cdd5ef08-f1a6-4fcc-967e-4929304a7b0e">
+![image](https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/c7f212a2-5d4e-47b2-a5d6-a129877426e9)
+
 
 The startup script will:
 
@@ -49,14 +51,16 @@ The startup script will:
 
 Once the script has completed, the application should be accessible at:
 **Front-End**: [http://localhost:30000](http://localhost:30000)
-<img width="763" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/110b1582-c134-4357-9173-b250410394b1">
+
+![image](https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/6aa5855c-00a2-4527-98f0-edf7e09facd7)
+
 
 ### 5. Access Grafana and Configure the Dashboard
 
 Grafana should be accessible via:
 **Grafana**: [http://localhost:30001](http://localhost:30001)
 
-<img width="469" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/45c4ac5d-90ea-42c9-8a0a-47e8731b57b3">
+![image](https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/07b62ac7-e451-4f6c-9786-220f48f7a422)
 
 | Username | Password|
 |--|--|
@@ -69,7 +73,8 @@ Once you have logged in:
 2. Click the blue 'New' button
 3. Select Import
 
-<img width="1453" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/5502c2a7-7466-474f-a0f1-bb46c9a7eae3">
+![image](https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/42ea9819-8358-4d48-a342-34f568859baf)
+
 
 
 4. In the cloned github repo, copy the contents from the JSON file found under 
@@ -83,18 +88,22 @@ To simulate load through the kubernetes cluster, I have used K6. K6 is a tool bu
 
 Before beginning the load test, take a look at the number of pods running on the system, as well as the average cpu load per pod. 
 
-<img width="1184" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/cf676ecc-de7c-40ff-8865-e0d84cddbab5">
+![image](https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/5948009e-bc14-40fb-916f-04f30510b8b4)
+
 
 To begin the load test, make sure K6 is installed, and then run:
 
     k6 run load-testing/k6/full-ramp-load-test.js
-<img width="1427" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/4dd23bbb-3411-4f84-b6d1-45fd6bb74eeb">
+
+![image](https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/e41dbb42-4142-4075-8d3e-5f5f93cddfad)
+
 
 The load test will begin, ramping up the number of virtual users. This mocks real activity on the web-app and gives the system time to scale in and out as required. 
 
 As the number of VU's increases, check Grafana to see the average CPU of the pods and the number of Pods within the deployment. 
 
-<img width="1172" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/6897e32d-7fde-4e54-8e54-6fd70dafec40">
+![image](https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/8bd83b2c-05ba-49c2-b9fd-b4a8cbd9df55)
+
 
 Thats it! Kubernetes Pods within the cluster scale up and down to accomodate for additional load on the system. 
 
@@ -107,17 +116,52 @@ To shut down the application and the minikube cluster, simply run:
 
     minikube delete
 
-<img width="650" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/99230f95-f8e6-4231-8837-7fa3e42d4782">
+![image](https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/436ae1f7-022b-4e89-a493-051bf654408f)
 
 ## Architecture
-<img width="209" alt="architecture" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/db171efd-e9b1-41af-a7fd-ce46c91c27ba">
 
+<img width="486" alt="image" src="https://github.com/jonathanjhunt/3-tier-app-with-k8s/assets/70526178/ef0cef96-41fc-4d6e-ae71-2013685fad07">
 
 ### Kubernetes Configuration
 The Kubernetes configuration for this application has been seperated into 3 seperate files for each tier of the application:
 
 #### Deployment Definitions
-<img width="581" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/3c61fbc2-406d-4679-b002-eaedc11d4fd6">
+
+```yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+      tier: frontend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: frontend
+        tier: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: jonathanjhunt/euros-vote-app-frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "150Mi"
+              cpu: "200m"
+            limits:
+              memory: "250Mi"
+              cpu: "200m"
+
+...
+```
+
 
 The deployment definition files for each tier of the application follow a similiar template. The deployment defines the application tiers information, such as image used, nmber of pods, tags and resource requirements/requests.
 
@@ -133,7 +177,25 @@ The deployment definition files for each tier of the application follow a simili
 
 #### Service Definitions
 
-<img width="510" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/f16294dd-fc4e-4274-8527-22567e59c7d5">
+```yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: frontend
+    tier: frontend
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
+    nodePort: 30000
+  type: NodePort
+...
+```
+
 
 The service definition file acts as the network connection between pods. Services are attached to pods and allows connectivity between different applications, as well as exposing connectivity to the internet. 
 
@@ -150,7 +212,22 @@ The service definition file acts as the network connection between pods. Service
 
 The HPA (horizontal pod autoscaling) definition file configurs the pods to autoscale based on the average load on a pod. This allows the three tier-application to scale in and out based on usage. 
 
-<img width="454" alt="image" src="https://github.com/jonathanjhunt/euros-vote-app/assets/70526178/7e021766-e278-4de0-99d1-ee3ac0a3ff3f">
+```yaml
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend-autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: frontend
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 30
+...
+```
 
 | key | definition |
 |--|--|
