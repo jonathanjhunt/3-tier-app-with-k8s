@@ -16,11 +16,11 @@ spec:
         app: frontend
         tier: frontend
     spec:
-      tolerations:
-        - key: "frontend"
-          operator: "Equal"
-          value: "true"
-          effect: "NoSchedule"
+      # tolerations:
+      #   - key: "frontend"
+      #     operator: "Equal"
+      #     value: "true"
+      #     effect: "NoSchedule"
       containers:
         - name: frontend
           image: jonathanjhunt/euros-vote-app-frontend:latest

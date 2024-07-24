@@ -1,11 +1,11 @@
-name: Build and Push Docker Frontend Image
+name: Build and Push Docker Backend Image
 
 on:
   push:
     branches:
       - main
     paths:
-      - euros-dashboard-frontend/**
+      - euros-dashboard-backend/**
 
 jobs:
   build-and-push:
@@ -27,11 +27,11 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
-          context: euros-dashboard-frontend
-          file: euros-dashboard-frontend/Dockerfile
+          context: euros-dashboard-backend
+          file: euros-dashboard-backend/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/euros-vote-app-frontend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/euros-vote-app-backend:latest
 
       - name: Log out from Docker Hub
         run: docker logout
