@@ -17,10 +17,10 @@ spec:
         tier: backend
     spec:
       tolerations:
-        - key: "backend"
-          operator: "Equal"
-          value: "true"
-          effect: "NoSchedule" 
+        # - key: "backend"
+        #   operator: "Equal"
+        #   value: "true"
+        #   effect: "NoSchedule" 
       containers:
         - name: backend
           image: jonathanjhunt/euros-vote-app-backend:latest
