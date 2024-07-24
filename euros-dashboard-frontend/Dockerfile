@@ -5,18 +5,17 @@ WORKDIR /app
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Clean the npm cache and install dependencies
-RUN npm cache clean --force
+# Install dependencies
 RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Ensure all binaries in node_modules/.bin are executable
-RUN chmod -R +x /app/node_modules/.bin
-
 # Debugging: List contents of /app/node_modules/.bin
 RUN ls -l /app/node_modules/.bin
+
+# Ensure all binaries in node_modules/.bin are executable
+RUN chmod -R +x /app/node_modules/.bin
 
 # Run build script
 RUN npm run build
