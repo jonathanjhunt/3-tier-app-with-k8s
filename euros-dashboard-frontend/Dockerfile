@@ -1,11 +1,10 @@
 # Build Stage
-FROM node:alpine AS build-stage
+FROM node:16 AS build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-# Ensure npm scripts have correct permissions
-RUN chmod +x /app/node_modules/.bin/* && npm run build
+RUN npm run build
 
 # Serve Stage
 FROM nginx:alpine
