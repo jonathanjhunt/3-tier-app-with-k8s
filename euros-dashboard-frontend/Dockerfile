@@ -1,5 +1,5 @@
 # Build Stage
-FROM node:16 AS build-stage
+FROM --platform=linux/amd64 node:16 AS build-stage
 WORKDIR /app
 
 # Copy package.json and package-lock.json
@@ -21,7 +21,7 @@ RUN chmod -R +x /app/node_modules/.bin
 RUN npm run build
 
 # Serve Stage
-FROM nginx:alpine
+FROM --platform=linux/amd64 nginx:alpine
 COPY .nginx/nginx.conf /etc/nginx/nginx.conf
 
 # Remove default nginx index page
