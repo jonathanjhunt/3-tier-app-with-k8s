@@ -14,6 +14,9 @@ COPY . .
 # Debugging: List contents of /app/node_modules/.bin
 RUN ls -l /app/node_modules/.bin
 
+# Ensure all binaries in node_modules/.bin are executable
+RUN chmod -R +x /app/node_modules/.bin
+
 # Run build script
 RUN npm run build
 
