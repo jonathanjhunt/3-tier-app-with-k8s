@@ -16,5 +16,5 @@ COPY . /app/backend
 # Step 6: Expose the port your app runs on
 EXPOSE 3001
 
-# Step 7: Start your application
+# Step 7: Start your application/
 CMD ["node", "server.js"]
