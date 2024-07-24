@@ -4,7 +4,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+# Ensure npm scripts have correct permissions
+RUN chmod +x /app/node_modules/.bin/* && npm run build
 
 # Serve Stage
 FROM nginx:alpine
