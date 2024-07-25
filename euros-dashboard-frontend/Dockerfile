@@ -1,37 +1,24 @@
-# Build Stage
-FROM --platform=linux/amd64 node:16 AS build-stage
+# Use an official Node.js runtime as a parent image
+FROM node:14
+
+# Set the working directory
 WORKDIR /app
 
 # Copy package.json and package-lock.json
-COPY package*.json ./
+COPY package.json ./
+COPY package-lock.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application code
-COPY . .
+COPY . ./
 
-# Debugging: List contents of /app/node_modules/.bin
-RUN ls -l /app/node_modules/.bin
-
-# Ensure all binaries in node_modules/.bin are executable
-RUN chmod -R +x /app/node_modules/.bin
-
-# Run build script
+# Build the React application
 RUN npm run build
 
-# Serve Stage
-FROM --platform=linux/amd64 nginx:alpine
-COPY .nginx/nginx.conf /etc/nginx/nginx.conf
+# Expose the port the app runs on
+EXPOSE 3000
 
-# Remove default nginx index page
-RUN rm -rf /usr/share/nginx/html/*
-
-# Copy build output to nginx html directory
-COPY --from=build-stage /app/build /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start nginx/
-CMD ["nginx", "-g", "daemon off;"]
+# Start the React application
+CMD ["npx", "serve", "-s", "build"]
