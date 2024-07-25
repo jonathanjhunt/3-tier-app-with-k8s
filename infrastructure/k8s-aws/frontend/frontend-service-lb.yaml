@@ -4,6 +4,12 @@ kind: Service
 metadata:
   name: frontend
   namespace: three-tier-app
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: instance
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
 spec:
   type: LoadBalancer
   selector:
@@ -11,7 +17,5 @@ spec:
     tier: frontend
   ports:
   - protocol: "TCP"
-    port: 5678
-    targetPort: 3000
-  
-...
+    port: 80
+    targetPort: 80
