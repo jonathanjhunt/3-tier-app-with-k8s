@@ -10,4 +10,4 @@ spec:
     name: frontend
   minReplicas: 2
   maxReplicas: 10
-  targetCPUUtilizationPercentage: 30
+  targetCPUUtilizationPercentage: 50
