@@ -11,9 +11,9 @@ export const options = {
         { duration: '30s', target: 250 },
         { duration: '30s', target: 500 },
         { duration: '60s', target: 1000 },
-        { duration: '120s', target: 1250 },
-        { duration: '120s', target: 1500 },
-        { duration: '120s', target: 1750 },
+        { duration: '120s', target: 3000 },
+        { duration: '120s', target: 6000 },
+        { duration: '120s', target: 4000 },
         // { duration: '120s', target: 4000 },
         // { duration: '120s', target: 4000 },
         // { duration: '120s', target: 5000 },
@@ -48,7 +48,7 @@ function getPlayer() {
 }
 
 function sendVote() {
-  const url = 'http://localhost:30000/api/vote';
+  const url = 'http://aac430ee9d6d746ae858311e630cf0d2-8382737.eu-west-1.elb.amazonaws.com/api/vote';
   const payload = JSON.stringify({
     team: getTeam(),
   });
@@ -63,7 +63,7 @@ function sendVote() {
 }
 
 function sendPlayerVote() {
-  const url = 'http://localhost:30000/api/playerVote';
+  const url = 'http://aac430ee9d6d746ae858311e630cf0d2-8382737.eu-west-1.elb.amazonaws.com/api/playerVote';
   const payload = JSON.stringify({
     player: getPlayer(),
   });
@@ -77,11 +77,11 @@ function sendPlayerVote() {
   http.post(url, payload, params);
 }
 export default function() {
-  http.get('http://localhost:30000');
+  http.get('http://aac430ee9d6d746ae858311e630cf0d2-8382737.eu-west-1.elb.amazonaws.com/');
   sleep(1);
-  http.get('http://localhost:30000/api/getVotes');
+  http.get('http://aac430ee9d6d746ae858311e630cf0d2-8382737.eu-west-1.elb.amazonaws.com/api/getVotes');
   sleep(1);
-  http.get('http://localhost:30000/api/getPlayerVotes');
+  http.get('http://aac430ee9d6d746ae858311e630cf0d2-8382737.eu-west-1.elb.amazonaws.com/api/getPlayerVotes');
   sleep(1);
   sendVote();
   sleep(1);
