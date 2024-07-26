@@ -15,7 +15,11 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+const mongoUsername = process.env.MONGO_USERNAME;
+const mongoPassword = process.env.MONGO_PASSWORD;
+const mongoUri = `mongodb://${mongoUsername}:${mongoPassword}@database:27017/euros-vote-db`;
+
+mongoose.connect(monogUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
