@@ -17,7 +17,7 @@ app.use(express.json());
 
 const mongoUsername = process.env.MONGO_USERNAME;
 const mongoPassword = process.env.MONGO_PASSWORD;
-const mongoUri = `mongodb://${mongoUsername}:${mongoPassword}@database:27017/euros-vote-db`;
+const mongoUri = `mongodb://${mongoUsername}:${mongoPassword}@database:27017/euros-vote-db?authSource=admin`;
 
 mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
