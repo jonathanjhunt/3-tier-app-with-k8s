@@ -1,2 +1,7 @@
 euros-dashboard-frontend/node_modules/*
 euros-dashboard-backend/node_modules/*
+terraform/.terraform/*
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/terraform.tfvars
+terraform/.terraform.lock.hcl

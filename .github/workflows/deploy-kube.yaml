@@ -1,0 +1,148 @@
+name: Deploy to Kubernetes
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Kubernetes CLI
+      uses: azure/setup-kubectl@v1
+      with:
+        version: 'default'
+
+    - name: Install AWS CLI
+      uses: aws-actions/setup-aws-cli@v1
+
+    - name: Install Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-1
+
+    - name: Login to EKS cluster
+      run: |
+        aws eks --region eu-west-1 update-kubeconfig --name euros-vote-app
+
+    - name: Create Kubernetes Namespace
+      run: |
+        kubectl create namespace three-tier-app
+
+    - name: Injecting MongoDB secrets
+      run: |
+        echo "Injecting MongoDB secrets..."
+        kubectl create secret generic mongo-secret \
+          --namespace=three-tier-app \
+          --from-literal=mongo-username=${{ secrets.MONGODB_USER }} \
+          --from-literal=mongo-password=${{ secrets.MONGODB_PASS }}
+
+    - name: Deploy to Kubernetes
+      run: |
+        echo "Deploying the 3-Tier App with Kubernetes on AWS EKS..."
+        echo "Applying the Kubernetes manifests..."
+        sleep 1
+        # MongoDB Deployment
+        echo "Creating the MongoDB Deployment..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/mongodb/db-definition.yaml
+        echo "MongoDB Deployment has been created."
+        sleep 1
+        echo "Creating the MongoDB Service..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/mongodb/db-service.yaml
+        echo "MongoDB Service has been created."
+        sleep 1
+        MONGODBSTATUS=$(kubectl get pods | grep mongo-deployment | awk '{print $3}')
+        while [ "$MONGODBSTATUS" != "Running" ]; do
+            echo "Waiting for the MongoDB Pod to be ready..."
+            sleep 5
+            MONGODBSTATUS=$(kubectl get pods | grep mongo-deployment | awk '{print $3}')
+        done
+        echo "MongoDB Pod is ready."
+        # Seeding the MongoDB Database
+        echo "Writing MongoDB pod details to variable MONGODBPOD..."
+        MONGODBPOD=$(kubectl get pods -n three-tier-app | grep mongo-deployment | awk '{print $1}')
+        echo "MongoDB Pod is: $MONGODBPOD"
+        sleep 1
+        echo "Seeding the MongoDB Database..."
+        kubectl cp /3-tier-app-with-k8s/config/mongodbseeding/lists/team-data.json default/$MONGODBPOD:/tmp/team-data.json
+        kubectl cp /3-tier-app-with-k8s/config/mongodbseeding/lists/player-data.json default/$MONGODBPOD:/tmp/player-data.json
+        kubectl exec $MONGODBPOD -- ls /tmp
+        kubectl exec $MONGODBPOD -- mongoimport --db euros-vote-db --collection team-vote --type json --jsonArray --file /tmp/team-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
+        kubectl exec $MONGODBPOD -- mongoimport --db euros-vote-db --collection player-vote --type json --jsonArray --file /tmp/player-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
+        echo "MongoDB Database has been seeded."
+        sleep 1
+        # Backend Deployment
+        echo "Creating the Backend Deployment..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/backend/backend-definition.yaml
+        echo "Backend Deployment has been created."
+        sleep 1
+        echo "Creating the Backend Service..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/backend/backend-service.yaml
+        echo "Backend Service has been created."
+        sleep 1
+        echo "Creating the Backend Horizontal Pod Autoscaling (HPA)..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/backend/backend-hpa.yaml
+        echo "Backend Horizontal Pod Autoscaling (HPA) has been created."
+        sleep 1
+        # Frontend Deployment
+        echo "Creating the Frontend Deployment..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/frontend/frontend-definition.yaml
+        echo "Frontend Deployment has been created."
+        sleep 1
+        echo "Creating the Frontend Service..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/frontend/frontend-service.yaml
+        echo "Frontend Service has been created."
+        sleep 1
+        echo "Creating the Frontend Horizontal Pod Autoscaling (HPA)..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/frontend/frontend-hpa.yaml
+        echo "Frontend Horizontal Pod Autoscaling (HPA) has been created."
+        sleep 1
+        echo "Creating the NGINX Ingress Controller..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/nginx/nginx-conf.yaml
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/nginx/nginx.yaml
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/nginx/nginx-lb.yaml
+        # Deploy Metrics Server
+        echo "Deploying the Metrics Server..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/metrics/metrics-server-definition.yaml
+        echo "Metrics Server has been deployed."
+        # Prometheus-Grafana Deployment
+        echo "Creating the Prometheus-Grafana Deployment..."
+        echo "Adding the Prometheus Helm Repository..."
+        sleep 1
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        echo "Updating the Helm Repositories..."
+        sleep 1
+        helm repo update
+        echo "Installing the Prometheus-Grafana Stack..."
+        sleep 1
+        helm install prometheus prometheus-community/kube-prometheus-stack
+        echo "Prometheus-Grafana Stack has been installed."
+        sleep 1
+        # MongoDB-Exporter Deployment
+        echo "Creating the MongoDB-Exporter Deployment..."
+        helm install mongodb-exporter prometheus-community/prometheus-mongodb-exporter -f ./monitoring/prometheus/mongodb-exporter.yaml
+        echo "MongoDB-Exporter Deployment completed."
+        echo "Creating the grafafana NGINX Ingress..."
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/grafana-nginx/nginx-grafana-conf.yaml
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/grafana-nginx/nginx-grafana.yaml
+        kubectl apply -f /3-tier-app-with-k8s/infrastructure/k8s-aws/grafana-nginx/nginx-grafana-lb.yaml
+        echo "3-Tier App with Kubernetes on AWS EKS has been deployed."
+
+    - name: Get the external IP's
+      run: |
+        APP_LB_URL=$(kubectl get svc -n three-tier-app -o jsonpath='{.items[?(@.metadata.name=="nginx-lb")].status.loadBalancer.ingress[0].hostname}')
+        echo "Application Load Balancer URL: http://$APP_LB_URL"
+        GRAFANA_LB_URL=$(kubectl get svc -n three-tier-app -o jsonpath='{.items[?(@.metadata.name=="nginx-grafana")].status.loadBalancer.ingress[0].hostname}')
+        echo "Grafana Load Balancer URL: http://$GRAFANA_LB_URL"
+        echo 'Application URL: $APP_LB_URL' >> $GITHUB_STEP_SUMMARY
+        echo 'Grafana URL: $GRAFANA_LB_URL' >> $GITHUB_STEP_SUMMARY
+
