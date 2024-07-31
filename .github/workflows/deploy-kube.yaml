@@ -76,7 +76,15 @@ jobs:
         echo "Writing MongoDB pod details to variable MONGODBPOD..."
         MONGODBPOD=$(kubectl get pods -n three-tier-app | grep mongo-deployment | awk '{print $1}')
         echo "MongoDB Pod is: $MONGODBPOD"
-        sleep 1
+        sleep 10
+        echo waiting for MongoDB to start
+        sleep 10
+        echo waiting for MongoDB to start
+        sleep 10
+        echo waiting for MongoDB to start
+        sleep 10
+        echo waiting for MongoDB to start
+        sleep 10
         echo "Seeding the MongoDB Database..."
         kubectl cp ./config/mongodbseeding/lists/team-data.json three-tier-app/$MONGODBPOD:/tmp/team-data.json
         kubectl cp ./config/mongodbseeding/lists/player-data.json three-tier-app/$MONGODBPOD:/tmp/player-data.json
