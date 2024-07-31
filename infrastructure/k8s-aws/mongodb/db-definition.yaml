@@ -19,9 +19,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 27017
-        volumeMounts:
-        - name: mongo-persistent-storage
-          mountPath: /data/db
+        # volumeMounts:
+        # - name: mongo-persistent-storage
+        #   mountPath: /data/db
         env:
         - name: MONGO_INITDB_ROOT_USERNAME
           valueFrom:
@@ -33,20 +33,20 @@ spec:
             secretKeyRef:
               name: mongo-secret
               key: mongo-password
-      volumes:
-      - name: mongo-persistent-storage
-        persistentVolumeClaim:
-          claimName: mongo-pvc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mongo-pvc
-  namespace: three-tier-app
-spec:
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: ebs-sc
-  resources:
-    requests:
-      storage: 20Gi
+#       volumes:
+#       - name: mongo-persistent-storage
+#         persistentVolumeClaim:
+#           claimName: mongo-pvc
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: mongo-pvc
+#   namespace: three-tier-app
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   storageClassName: ebs-sc
+#   resources:
+#     requests:
+#       storage: 20Gi
