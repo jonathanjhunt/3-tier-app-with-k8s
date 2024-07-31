@@ -55,6 +55,8 @@ jobs:
         echo "Applying the Kubernetes manifests..."
         sleep 1
         # MongoDB Deployment
+        echo "Creating the storage class for MongoDB..."
+        kubectl apply -f ./infrastructure/k8s-aws/mongodb/storage-class.yaml
         echo "Creating the MongoDB Deployment..."
         kubectl apply -f ./infrastructure/k8s-aws/mongodb/db-definition.yaml
         echo "MongoDB Deployment has been created."
@@ -63,7 +65,7 @@ jobs:
         kubectl apply -f ./infrastructure/k8s-aws/mongodb/db-service.yaml
         echo "MongoDB Service has been created."
         sleep 1
-        MONGODBSTATUS=$(kubectl get pods | grep mongo-deployment | awk '{print $3}')
+        MONGODBSTATUS=$(kubectl get pods -n three-tier-app | grep mongo-deployment | awk '{print $3}')
         while [ "$MONGODBSTATUS" != "Running" ]; do
             echo "Waiting for the MongoDB Pod to be ready..."
             sleep 5
@@ -76,8 +78,8 @@ jobs:
         echo "MongoDB Pod is: $MONGODBPOD"
         sleep 1
         echo "Seeding the MongoDB Database..."
-        kubectl cp ./config/mongodbseeding/lists/team-data.json default/$MONGODBPOD:/tmp/team-data.json
-        kubectl cp ./config/mongodbseeding/lists/player-data.json default/$MONGODBPOD:/tmp/player-data.json
+        kubectl cp ./config/mongodbseeding/lists/team-data.json three-tier-app/$MONGODBPOD:/tmp/team-data.json
+        kubectl cp ./config/mongodbseeding/lists/player-data.json three-tier-app/$MONGODBPOD:/tmp/player-data.json
         kubectl exec $MONGODBPOD -- ls /tmp
         kubectl exec $MONGODBPOD -- mongoimport --db euros-vote-db --collection team-vote --type json --jsonArray --file /tmp/team-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
         kubectl exec $MONGODBPOD -- mongoimport --db euros-vote-db --collection player-vote --type json --jsonArray --file /tmp/player-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
