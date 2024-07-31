@@ -88,9 +88,9 @@ jobs:
         echo "Seeding the MongoDB Database..."
         kubectl cp ./config/mongodbseeding/lists/team-data.json three-tier-app/$MONGODBPOD:/tmp/team-data.json
         kubectl cp ./config/mongodbseeding/lists/player-data.json three-tier-app/$MONGODBPOD:/tmp/player-data.json
-        kubectl exec $MONGODBPOD -- ls /tmp
-        kubectl exec $MONGODBPOD -- mongoimport --db euros-vote-db --collection team-vote --type json --jsonArray --file /tmp/team-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
-        kubectl exec $MONGODBPOD -- mongoimport --db euros-vote-db --collection player-vote --type json --jsonArray --file /tmp/player-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
+        kubectl exec $MONGODBPOD -n three-tier-app -- ls /tmp
+        kubectl exec $MONGODBPOD -n three-tier-app -- mongoimport --db euros-vote-db --collection team-vote --type json --jsonArray --file /tmp/team-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
+        kubectl exec $MONGODBPOD -n three-tier-app -- mongoimport --db euros-vote-db --collection player-vote --type json --jsonArray --file /tmp/player-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
         echo "MongoDB Database has been seeded."
         sleep 1
         # Backend Deployment
@@ -131,18 +131,18 @@ jobs:
         echo "Creating the Prometheus-Grafana Deployment..."
         echo "Adding the Prometheus Helm Repository..."
         sleep 1
-        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts 
         echo "Updating the Helm Repositories..."
         sleep 1
         helm repo update
         echo "Installing the Prometheus-Grafana Stack..."
         sleep 1
-        helm install prometheus prometheus-community/kube-prometheus-stack
+        helm install prometheus prometheus-community/kube-prometheus-stack -n three-tier-app
         echo "Prometheus-Grafana Stack has been installed."
         sleep 1
         # MongoDB-Exporter Deployment
         echo "Creating the MongoDB-Exporter Deployment..."
-        helm install mongodb-exporter prometheus-community/prometheus-mongodb-exporter -f ./monitoring/prometheus/mongodb-exporter.yaml
+        helm install mongodb-exporter prometheus-community/prometheus-mongodb-exporter -f ./monitoring/prometheus/mongodb-exporter.yaml -n three-tier-app
         echo "MongoDB-Exporter Deployment completed."
         echo "Creating the grafafana NGINX Ingress..."
         kubectl apply -f ./infrastructure/k8s-aws/grafana-nginx/nginx-grafana-conf.yaml
