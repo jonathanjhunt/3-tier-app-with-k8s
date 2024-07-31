@@ -17,7 +17,10 @@ jobs:
         version: 'default'
 
     - name: Install AWS CLI
-      uses: aws-actions/setup-aws-cli@v1
+      run: |
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
 
     - name: Install Helm
       run: |
