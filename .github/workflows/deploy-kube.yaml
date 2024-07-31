@@ -12,9 +12,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up Kubernetes CLI
-      uses: azure/setup-kubectl@v3
-      with:
-        version: 'default'
+      uses: Azure/setup-kubectl@v4.0.0
 
     - name: Install AWS CLI
       run: |
