@@ -89,8 +89,8 @@ jobs:
         kubectl cp ./config/mongodbseeding/lists/team-data.json three-tier-app/$MONGODBPOD:/tmp/team-data.json
         kubectl cp ./config/mongodbseeding/lists/player-data.json three-tier-app/$MONGODBPOD:/tmp/player-data.json
         kubectl exec $MONGODBPOD -n three-tier-app -- ls /tmp
-        kubectl exec $MONGODBPOD -n three-tier-app -- mongoimport --db euros-vote-db --collection team-vote --type json --jsonArray --file /tmp/team-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
-        kubectl exec $MONGODBPOD -n three-tier-app -- mongoimport --db euros-vote-db --collection player-vote --type json --jsonArray --file /tmp/player-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }}
+        kubectl exec $MONGODBPOD -n three-tier-app -- mongoimport --db euros-vote-db --collection team-vote --type json --jsonArray --file /tmp/team-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }} --authenticationDatabase admin
+        kubectl exec $MONGODBPOD -n three-tier-app -- mongoimport --db euros-vote-db --collection player-vote --type json --jsonArray --file /tmp/player-data.json --username ${{ secrets.MONGODB_USER }} --password ${{ secrets.MONGODB_PASS }} --authenticationDatabase admin
         echo "MongoDB Database has been seeded."
         sleep 1
         # Backend Deployment
