@@ -1,4 +1,4 @@
-name: Deploy to Kubernetes
+name: Deploy Application to Kubernetes on AWS EKS
 
 on:
   workflow_dispatch:
