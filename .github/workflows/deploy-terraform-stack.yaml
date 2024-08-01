@@ -8,13 +8,13 @@ jobs:
     name: 'Terraform Apply'
     runs-on: ubuntu-latest
 
-    name: 'Move to Terraform Directory'
-    run: cd terraform
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: 'Move to Terraform Directory'
+        run: cd terraform
+        
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3.1.1
 
