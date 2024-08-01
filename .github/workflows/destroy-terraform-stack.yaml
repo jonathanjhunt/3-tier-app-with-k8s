@@ -22,6 +22,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
         working-directory: ./terraform

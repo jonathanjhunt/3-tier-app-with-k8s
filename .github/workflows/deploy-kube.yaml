@@ -149,6 +149,8 @@ jobs:
         kubectl apply -f ./infrastructure/k8s-aws/grafana-nginx/nginx-grafana.yaml
         kubectl apply -f ./infrastructure/k8s-aws/grafana-nginx/nginx-grafana-lb.yaml
         echo "3-Tier App with Kubernetes on AWS EKS has been deployed."
+        echo "waiting for grafana LB to be built"
+        sleep 15
 
     - name: Get the external IP's
       run: |
@@ -156,6 +158,11 @@ jobs:
         echo "Application Load Balancer URL: http://$APP_LB_URL"
         GRAFANA_LB_URL=$(kubectl get svc -n three-tier-app -o jsonpath='{.items[?(@.metadata.name=="nginx-grafana")].status.loadBalancer.ingress[0].hostname}')
         echo "Grafana Load Balancer URL: http://$GRAFANA_LB_URL"
-        echo 'Application URL: $APP_LB_URL' >> $GITHUB_STEP_SUMMARY
-        echo 'Grafana URL: $GRAFANA_LB_URL' >> $GITHUB_STEP_SUMMARY
+        echo "::set-output name=app_lb_url::http://$APP_LB_URL"
+        echo "::set-output name=grafana_lb_url::http://$GRAFANA_LB_URL"
+
+    - name: Add URLs to summary
+      run: |
+        echo "Application URL: ${{ steps.get_external_ips.outputs.app_lb_url }}" >> $GITHUB_STEP_SUMMARY
+        echo "Grafana URL: ${{ steps.get_external_ips.outputs.grafana_lb_url }}" >> $GITHUB_STEP_SUMMARY
 
