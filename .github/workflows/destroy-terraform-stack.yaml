@@ -1,11 +1,11 @@
-name: Deploy Terraform Stack
+name: "!! Destroy Terraform Stack !!"
 
 on:
   workflow_dispatch:
 
 jobs:
   terraform:
-    name: 'Terraform Apply'
+    name: 'Terraform Destroy'
     runs-on: ubuntu-latest
 
     steps:
@@ -22,10 +22,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Terraform Init
-        run: terraform init
-        working-directory: ./terraform
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
         working-directory: ./terraform
