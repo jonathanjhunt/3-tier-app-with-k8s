@@ -16,6 +16,7 @@ jobs:
         run: |
           pwd
           cd terraform
+          pwd
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3.1.1
