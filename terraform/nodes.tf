@@ -1,3 +1,31 @@
+resource "aws_iam_policy" "ebs_csi_policy" {
+  name        = "EKS_EBS_CSI_Policy"
+  description = "Policy for EKS nodes to manage EBS volumes"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "ec2:CreateSnapshot",
+          "ec2:AttachVolume",
+          "ec2:CreateVolume",
+          "ec2:DeleteSnapshot",
+          "ec2:DeleteVolume",
+          "ec2:DescribeAvailabilityZones",
+          "ec2:DescribeInstances",
+          "ec2:DescribeSnapshots",
+          "ec2:DescribeTags",
+          "ec2:DescribeVolumes",
+          "ec2:DescribeVolumesModifications",
+          "ec2:DetachVolume"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role" "nodes" {
   name = "eks-node-group-nodes"
 
@@ -28,6 +56,11 @@ resource "aws_iam_role_policy_attachment" "nodes-AmazonEC2ContainerRegistryReadO
   role       = aws_iam_role.nodes.name
 }
 
+resource "aws_iam_role_policy_attachment" "nodes-EBS_CSI_Policy" {
+  policy_arn = aws_iam_policy.ebs_csi_policy.arn
+  role       = aws_iam_role.nodes.name
+}
+
 resource "aws_eks_node_group" "private-nodes" {
   cluster_name    = aws_eks_cluster.euros-vote-app.name
   node_group_name = "private-nodes"
@@ -39,12 +72,12 @@ resource "aws_eks_node_group" "private-nodes" {
   ]
 
   capacity_type  = "ON_DEMAND"
-  instance_types = ["t3.small"]
+  instance_types = ["t3.medium"]
 
   scaling_config {
-    desired_size = 1
+    desired_size = 2
     max_size     = 5
-    min_size     = 0
+    min_size     = 1
   }
 
   update_config {
