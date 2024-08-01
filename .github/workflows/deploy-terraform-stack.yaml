@@ -8,6 +8,9 @@ jobs:
     name: 'Terraform Apply'
     runs-on: ubuntu-latest
 
+    name: 'Move to Terraform Directory'
+    run: cd terraform
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
